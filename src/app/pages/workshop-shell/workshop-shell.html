@@ -1,0 +1,52 @@
+@if (workshop(); as ws) {
+  <section class="workshop-shell">
+    <aside class="workshop-shell__sidebar">
+      <h2><a [routerLink]="['/', ws.slug]">{{ ws.title }}</a></h2>
+      @if (ws.tagline) {
+        <p><em>{{ ws.tagline }}</em></p>
+      }
+      <ul class="workshop-shell__nav">
+        @for (section of ws.sections; track section.slug) {
+          <li>
+            <a
+              [routerLink]="['/', ws.slug, section.slug]"
+              routerLinkActive="is-active"
+              [class.is-section-complete]="sectionIsComplete(section.slug)"
+            >
+              <i
+                class="workshop-shell__status workshop-shell__status--complete fas fa-check-circle fa-fw"
+                aria-hidden="true"
+              ></i>
+              <i
+                class="workshop-shell__status workshop-shell__status--incomplete far fa-circle fa-fw"
+                aria-hidden="true"
+              ></i>
+              <span>{{ section.title }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+      <div class="workshop-shell__progress">
+        <div>Your progress: {{ progressPercent() }}%</div>
+        <div class="workshop-shell__progress-bar">
+          <div
+            class="workshop-shell__progress-fill"
+            [style.width.%]="progressPercent()"
+          ></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="workshop-shell__content">
+      <router-outlet></router-outlet>
+    </div>
+  </section>
+} @else {
+  <section>
+    <h1>Workshop not found</h1>
+    <p>
+      Unknown workshop slug <code>{{ workshopSlug() }}</code>.
+      <a [routerLink]="['/']">Back to the index.</a>
+    </p>
+  </section>
+}

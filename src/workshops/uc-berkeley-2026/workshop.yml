@@ -1,0 +1,3 @@
+title: "UC Berkeley AI Workshop 2026"
+tagline: "Build a bare-minimum Deepgram voice agent in Python"
+description: "A hands-on session walking through the smallest possible voice agent built with Deepgram's Python SDK. We use `uv` for environment management, `sounddevice` for cross-platform mic and speaker I/O, and the Deepgram Voice Agent WebSocket for the listen/think/speak loop."

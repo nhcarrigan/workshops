@@ -1,0 +1,58 @@
+@if (section(); as sec) {
+  <section>
+    <h1>{{ sec.title }}</h1>
+    @if (sec.intro) {
+      <div [innerHTML]="sec.intro"></div>
+    }
+
+    @for (step of sec.steps; track step.id) {
+      <app-step [step]="step"></app-step>
+    }
+
+    <div class="workshop-continue">
+      <div>
+        <a
+          class="workshop-continue__prev-link"
+          [routerLink]="previousSection() ? ['/', workshopSlug(), previousSection()!.slug] : null"
+          [hidden]="!previousSection()"
+        >
+          <button type="button">
+            <i class="fas fa-arrow-left fa-fw" aria-hidden="true"></i>
+            Previous: {{ previousSection()?.title }}
+          </button>
+        </a>
+      </div>
+      <div>
+        <button
+          type="button"
+          (click)="completeAndContinue()"
+          [class.is-complete]="isComplete()"
+          [class.is-final]="!nextSection()"
+        >
+          <i
+            class="fas fa-check fa-fw workshop-continue__check"
+            aria-hidden="true"
+          ></i>
+          {{ continueLabel() }}
+          <i
+            class="fas fa-arrow-right fa-fw workshop-continue__arrow"
+            aria-hidden="true"
+          ></i>
+          <i
+            class="fas fa-flag-checkered fa-fw workshop-continue__flag"
+            aria-hidden="true"
+          ></i>
+        </button>
+      </div>
+    </div>
+  </section>
+} @else {
+  <section>
+    <h1>Section not found</h1>
+    <p>
+      Unknown section <code>{{ sectionSlug() }}</code> in workshop
+      <code>{{ workshopSlug() }}</code>.
+      <a [routerLink]="['/', workshopSlug()]">Back to the workshop home.</a>
+    </p>
+  </section>
+}

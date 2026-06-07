@@ -1,0 +1,30 @@
+@if (workshop(); as ws) {
+  <section>
+    <h1>{{ ws.title }}</h1>
+    @if (ws.tagline) {
+      <p class="witchy-accent">{{ ws.tagline }}</p>
+    }
+    @if (ws.description) {
+      <p>{{ ws.description }}</p>
+    }
+
+    <h2>Sections</h2>
+    <ol>
+      @for (section of ws.sections; track section.slug) {
+        <li>
+          <a [routerLink]="['/', ws.slug, section.slug]">{{ section.title }}</a>
+        </li>
+      }
+    </ol>
+
+    @if (firstSectionSlug(); as firstSlug) {
+      <p>
+        <a [routerLink]="['/', ws.slug, firstSlug]">
+          <button type="button">Start the workshop</button>
+        </a>
+      </p>
+    } @else {
+      <p><em>This workshop has no sections yet.</em></p>
+    }
+  </section>
+}

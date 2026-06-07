@@ -1,39 +1,59 @@
-# New Repository Template
+# Workshops
 
-This template contains all of our basic files for a new GitHub repository. There is also a handy workflow that will create an issue on a new repository made from this template, with a checklist for the steps we usually take in setting up a new repository.
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.0.
 
-If you're starting a Node.JS project with TypeScript, we have a [specific template](https://github.com/naomi-lgbt/nodejs-typescript-template) for that purpose.
+## Development server
 
-## Readme
+To start a local development server, run:
 
-Delete all of the above text (including this line), and uncomment the below text to use our standard readme template.
+```bash
+ng serve
+```
 
-<!-- # Project Name
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
-Project Description
+## Code scaffolding
 
-## Live Version
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
-This page is currently deployed. [View the live website.]
+```bash
+ng generate component component-name
+```
 
-## Feedback and Bugs
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
-If you have feedback or a bug report, please [log a ticket on our forum](https://support.nhcarrigan.com).
+```bash
+ng generate --help
+```
 
-## Contributing
+## Building
 
-If you would like to contribute to the project, you may create a Pull Request containing your proposed changes and we will review it as soon as we are able! Please review our [contributing guidelines](CONTRIBUTING.md) first.
+To build the project run:
 
-## Code of Conduct
+```bash
+ng build
+```
 
-Before interacting with our community, please read our [Code of Conduct](CODE_OF_CONDUCT.md).
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
-## License
+## Running unit tests
 
-This software is licensed under our [global software license](https://docs.nhcarrigan.com/#/license).
+To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
 
-Copyright held by Naomi Carrigan.
+```bash
+ng test
+```
 
-## Contact
+## Running end-to-end tests
 
-We may be contacted through our [Chat Server](http://chat.nhcarrigan.com) or via email at `contact@nhcarrigan.com`. -->
+For end-to-end (e2e) testing, run:
+
+```bash
+ng e2e
+```
+
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

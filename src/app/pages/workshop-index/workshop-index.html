@@ -1,0 +1,21 @@
+<section>
+  <h1>Workshops</h1>
+  <p>Hands-on companion guides for NHCarrigan trainings.</p>
+
+  @if (workshops().length === 0) {
+    <p><em>No workshops have been added yet. Drop a folder into <code>src/workshops/</code> and rebuild.</em></p>
+  }
+
+  @for (workshop of workshops(); track workshop.slug) {
+    <a class="workshop-card" [routerLink]="['/', workshop.slug]">
+      <h2>{{ workshop.title }}</h2>
+      @if (workshop.tagline) {
+        <p><strong>{{ workshop.tagline }}</strong></p>
+      }
+      @if (workshop.description) {
+        <p>{{ workshop.description }}</p>
+      }
+      <p><small>{{ workshop.sections.length }} sections</small></p>
+    </a>
+  }
+</section>
