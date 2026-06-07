@@ -107,7 +107,7 @@ export const WORKSHOPS: readonly Workshop[] = [
           {
             "id": "clone",
             "title": "Clone the starter repo",
-            "bodyHtml": "<p>In a terminal, clone the workshop repo:</p>\n<pre><code class=\"hljs language-bash\">git <span class=\"hljs-built_in\">clone</span> https://github.com/deepgram/uc-berkeley-ai-workshop-2026\n<span class=\"hljs-built_in\">cd</span> uc-berkeley-ai-workshop-2026\n</code></pre><p>The repo is intentionally small: one <code>main.py</code> file, a <code>pyproject.toml</code>, an <code>.env.example</code>, and a short README.</p>\n"
+            "bodyHtml": "<p>In a terminal, clone the workshop repo:</p>\n<pre><code class=\"hljs language-bash\">git <span class=\"hljs-built_in\">clone</span> https://dpgr.am/ucb-ai-repo uc-berkeley-ai-workshop-2026\n<span class=\"hljs-built_in\">cd</span> uc-berkeley-ai-workshop-2026\n</code></pre><p>The repo is intentionally small: one <code>main.py</code> file, a <code>pyproject.toml</code>, an <code>.env.example</code>, and a short README.</p>\n"
           },
           {
             "id": "drop-api-key",

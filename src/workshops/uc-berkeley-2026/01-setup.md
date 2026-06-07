@@ -44,7 +44,7 @@ Brand-new Deepgram accounts get **$200 in credit** applied automatically. You wo
 In a terminal, clone the workshop repo:
 
 ```bash
-git clone https://github.com/deepgram/uc-berkeley-ai-workshop-2026
+git clone https://dpgr.am/ucb-ai-repo uc-berkeley-ai-workshop-2026
 cd uc-berkeley-ai-workshop-2026
 ```
 
