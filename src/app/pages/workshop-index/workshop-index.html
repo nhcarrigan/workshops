@@ -8,12 +8,12 @@
 
   @for (workshop of workshops(); track workshop.slug) {
     <a class="workshop-card" [routerLink]="['/', workshop.slug]">
-      <h2>{{ workshop.title }}</h2>
+      <h2 [innerHTML]="workshop.title"></h2>
       @if (workshop.tagline) {
-        <p><strong>{{ workshop.tagline }}</strong></p>
+        <p><strong [innerHTML]="workshop.tagline"></strong></p>
       }
       @if (workshop.description) {
-        <p>{{ workshop.description }}</p>
+        <p [innerHTML]="workshop.description"></p>
       }
       <p><small>{{ workshop.sections.length }} sections</small></p>
     </a>

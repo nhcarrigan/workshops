@@ -1,9 +1,9 @@
 @if (workshop(); as ws) {
   <section class="workshop-shell">
     <aside class="workshop-shell__sidebar">
-      <h2><a [routerLink]="['/', ws.slug]">{{ ws.title }}</a></h2>
+      <h2><a [routerLink]="['/', ws.slug]"><span [innerHTML]="ws.title"></span></a></h2>
       @if (ws.tagline) {
-        <p><em>{{ ws.tagline }}</em></p>
+        <p><em [innerHTML]="ws.tagline"></em></p>
       }
       <ul class="workshop-shell__nav">
         @for (section of ws.sections; track section.slug) {
@@ -21,7 +21,7 @@
                 class="workshop-shell__status workshop-shell__status--incomplete far fa-circle fa-fw"
                 aria-hidden="true"
               ></i>
-              <span>{{ section.title }}</span>
+              <span [innerHTML]="section.title"></span>
             </a>
           </li>
         }

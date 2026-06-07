@@ -1,5 +1,5 @@
 <article class="workshop-step" [id]="step().id">
-  <h2 class="workshop-step__heading">{{ step().title }}</h2>
+  <h2 class="workshop-step__heading" [innerHTML]="step().title"></h2>
   <div class="workshop-step__body" [innerHTML]="step().bodyHtml"></div>
 
   @if (step().quiz; as quiz) {

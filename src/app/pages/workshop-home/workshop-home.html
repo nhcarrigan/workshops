@@ -1,18 +1,20 @@
 @if (workshop(); as ws) {
   <section>
-    <h1>{{ ws.title }}</h1>
+    <h1 [innerHTML]="ws.title"></h1>
     @if (ws.tagline) {
-      <p class="witchy-accent">{{ ws.tagline }}</p>
+      <p class="witchy-accent" [innerHTML]="ws.tagline"></p>
     }
     @if (ws.description) {
-      <p>{{ ws.description }}</p>
+      <p [innerHTML]="ws.description"></p>
     }
 
     <h2>Sections</h2>
     <ol>
       @for (section of ws.sections; track section.slug) {
         <li>
-          <a [routerLink]="['/', ws.slug, section.slug]">{{ section.title }}</a>
+          <a [routerLink]="['/', ws.slug, section.slug]">
+            <span [innerHTML]="section.title"></span>
+          </a>
         </li>
       }
     </ol>

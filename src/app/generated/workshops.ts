@@ -8,7 +8,7 @@ export const WORKSHOPS: readonly Workshop[] = [
     "slug": "uc-berkeley-2026",
     "title": "UC Berkeley AI Workshop 2026",
     "tagline": "Build a bare-minimum Deepgram voice agent in Python",
-    "description": "A hands-on session walking through the smallest possible voice agent built with Deepgram's Python SDK. We use `uv` for environment management, `sounddevice` for cross-platform mic and speaker I/O, and the Deepgram Voice Agent WebSocket for the listen/think/speak loop.",
+    "description": "A hands-on session walking through the smallest possible voice agent built with Deepgram&#39;s Python SDK. We use <code>uv</code> for environment management, <code>sounddevice</code> for cross-platform mic and speaker I/O, and the Deepgram Voice Agent WebSocket for the listen/think/speak loop.",
     "sections": [
       {
         "slug": "overview",
@@ -107,11 +107,11 @@ export const WORKSHOPS: readonly Workshop[] = [
           {
             "id": "clone",
             "title": "Clone the starter repo",
-            "bodyHtml": "<p>In a terminal, clone the workshop repo:</p>\n<pre><code class=\"hljs language-bash\">git <span class=\"hljs-built_in\">clone</span> https://dpgr.am/ucb-ai-repo uc-berkeley-ai-workshop-2026\n<span class=\"hljs-built_in\">cd</span> uc-berkeley-ai-workshop-2026\n</code></pre><p>The repo is intentionally small: one <code>main.py</code> file, a <code>pyproject.toml</code>, an <code>.env.example</code>, and a short README.</p>\n"
+            "bodyHtml": "<p>In a terminal, clone the workshop repo:</p>\n<pre><code class=\"hljs language-bash\">git <span class=\"hljs-built_in\">clone</span> git@github.com:deepgram-devs/uc-berkeley-ai-workshop-2026.git uc-berkeley-ai-workshop-2026\n<span class=\"hljs-built_in\">cd</span> uc-berkeley-ai-workshop-2026\n</code></pre><p>The repo is intentionally small: one <code>main.py</code> file, a <code>pyproject.toml</code>, an <code>.env.example</code>, and a short README.</p>\n"
           },
           {
             "id": "drop-api-key",
-            "title": "Drop your API key in `.env`",
+            "title": "Drop your API key in <code>.env</code>",
             "bodyHtml": "<p>Copy the example env file and open it in your editor:</p>\n<pre><code class=\"hljs language-bash\"><span class=\"hljs-built_in\">cp</span> .env.example .<span class=\"hljs-built_in\">env</span>\n</code></pre><p>Then in the Deepgram console, go to <strong>API Keys → Create a New API Key</strong>, name it anything you like, copy the value, and paste it into <code>.env</code>:</p>\n<pre><code class=\"hljs language-bash\">DEEPGRAM_API_KEY=your_key_here\n</code></pre><blockquote>\n<p><strong>Important:</strong> don&#39;t commit the real <code>.env</code> file. The repo&#39;s <code>.gitignore</code> already excludes it.</p>\n</blockquote>\n",
             "pausePoint": "Wait until everyone has their API key dropped into `.env` before moving on."
           },
@@ -185,7 +185,7 @@ export const WORKSHOPS: readonly Workshop[] = [
           },
           {
             "id": "prompt-role",
-            "title": "Shape the personality with `prompt`",
+            "title": "Shape the personality with <code>prompt</code>",
             "bodyHtml": "<p>The <code>prompt</code> field inside <code>think</code> is where the agent&#39;s personality lives. The starter says <em>&quot;You are a helpful AI assistant. Keep your responses brief.&quot;</em> — about as generic as it gets.</p>\n<p>Most of the real work in building a useful voice agent happens in this string. We&#39;ll iterate on the prompt in the <a href=\"/uc-berkeley-2026/personality\">Personality</a> section.</p>\n",
             "quiz": {
               "question": "What does the `prompt` field inside `think` actually control?",
@@ -210,7 +210,7 @@ export const WORKSHOPS: readonly Workshop[] = [
           },
           {
             "id": "greeting",
-            "title": "Greet the user with `greeting`",
+            "title": "Greet the user with <code>greeting</code>",
             "bodyHtml": "<p>The <code>greeting</code> field is the line your agent says the moment a session opens, before the user has spoken. It&#39;s both a UX nicety and a quick way to verify audio playback is working on the user&#39;s end.</p>\n"
           },
           {
@@ -253,12 +253,12 @@ export const WORKSHOPS: readonly Workshop[] = [
           },
           {
             "id": "dispatch",
-            "title": "Dispatch on `message_type`",
+            "title": "Dispatch on <code>message_type</code>",
             "bodyHtml": "<p>For non-byte messages, the <code>type</code> field tells you which event you&#39;re looking at. The handler in <code>main.py</code> covers all the common ones:</p>\n<pre><code class=\"hljs language-python\">message_type = <span class=\"hljs-built_in\">getattr</span>(message, <span class=\"hljs-string\">&quot;type&quot;</span>, <span class=\"hljs-string\">&quot;Unknown&quot;</span>)\n\n<span class=\"hljs-keyword\">if</span> message_type == <span class=\"hljs-string\">&quot;SettingsApplied&quot;</span>:\n    <span class=\"hljs-built_in\">print</span>(<span class=\"hljs-string\">&quot;&gt;&gt; Settings applied&quot;</span>)\n    settings_applied.<span class=\"hljs-built_in\">set</span>()\n<span class=\"hljs-keyword\">elif</span> message_type == <span class=\"hljs-string\">&quot;ConversationText&quot;</span>:\n    role = <span class=\"hljs-built_in\">getattr</span>(message, <span class=\"hljs-string\">&quot;role&quot;</span>, <span class=\"hljs-string\">&quot;unknown&quot;</span>)\n    content = <span class=\"hljs-built_in\">getattr</span>(message, <span class=\"hljs-string\">&quot;content&quot;</span>, <span class=\"hljs-string\">&quot;&quot;</span>)\n    <span class=\"hljs-built_in\">print</span>(<span class=\"hljs-string\">f&quot;[<span class=\"hljs-subst\">{role}</span>] <span class=\"hljs-subst\">{content}</span>&quot;</span>)\n<span class=\"hljs-keyword\">elif</span> message_type == <span class=\"hljs-string\">&quot;UserStartedSpeaking&quot;</span>:\n    <span class=\"hljs-built_in\">print</span>(<span class=\"hljs-string\">&quot;&gt;&gt; User started speaking&quot;</span>)\n<span class=\"hljs-keyword\">elif</span> message_type == <span class=\"hljs-string\">&quot;AgentThinking&quot;</span>:\n    <span class=\"hljs-built_in\">print</span>(<span class=\"hljs-string\">&quot;&gt;&gt; Agent thinking...&quot;</span>)\n<span class=\"hljs-keyword\">elif</span> message_type == <span class=\"hljs-string\">&quot;AgentStartedSpeaking&quot;</span>:\n    <span class=\"hljs-built_in\">print</span>(<span class=\"hljs-string\">&quot;&gt;&gt; Agent started speaking&quot;</span>)\n<span class=\"hljs-keyword\">elif</span> message_type == <span class=\"hljs-string\">&quot;AgentAudioDone&quot;</span>:\n    <span class=\"hljs-built_in\">print</span>(<span class=\"hljs-string\">&quot;&gt;&gt; Agent finished speaking&quot;</span>)\n<span class=\"hljs-keyword\">elif</span> message_type == <span class=\"hljs-string\">&quot;Error&quot;</span>:\n    code = <span class=\"hljs-built_in\">getattr</span>(message, <span class=\"hljs-string\">&quot;code&quot;</span>, <span class=\"hljs-string\">&quot;unknown&quot;</span>)\n    description = <span class=\"hljs-built_in\">getattr</span>(message, <span class=\"hljs-string\">&quot;description&quot;</span>, <span class=\"hljs-string\">&quot;unknown error&quot;</span>)\n    <span class=\"hljs-built_in\">print</span>(<span class=\"hljs-string\">f&quot;&gt;&gt; Agent error: <span class=\"hljs-subst\">{code}</span> - <span class=\"hljs-subst\">{description}</span>&quot;</span>)\n<span class=\"hljs-keyword\">else</span>:\n    <span class=\"hljs-built_in\">print</span>(<span class=\"hljs-string\">f&quot;&gt;&gt; <span class=\"hljs-subst\">{message_type}</span>&quot;</span>)\n</code></pre>"
           },
           {
             "id": "settings-applied",
-            "title": "Synchronise on `SettingsApplied`",
+            "title": "Synchronise on <code>SettingsApplied</code>",
             "bodyHtml": "<p>The <code>SettingsApplied</code> event is the handshake that tells you the agent has acknowledged your config and is ready to accept media. Before that, sending mic audio is a no-op at best and an error at worst.</p>\n<p>We use a <code>threading.Event</code> so the main thread can wait for the handshake before opening the microphone:</p>\n<pre><code class=\"hljs language-python\">settings_applied = threading.Event()\n\n<span class=\"hljs-comment\"># Inside on_message:</span>\n<span class=\"hljs-keyword\">if</span> message_type == <span class=\"hljs-string\">&quot;SettingsApplied&quot;</span>:\n    settings_applied.<span class=\"hljs-built_in\">set</span>()\n\n<span class=\"hljs-comment\"># Later, after sending settings:</span>\n<span class=\"hljs-keyword\">if</span> <span class=\"hljs-keyword\">not</span> settings_applied.wait(<span class=\"hljs-number\">10</span>):\n    <span class=\"hljs-keyword\">raise</span> TimeoutError(<span class=\"hljs-string\">&quot;Timed out waiting for agent settings to apply.&quot;</span>)\n</code></pre>",
             "quiz": {
               "question": "Why do we wait for `SettingsApplied` before starting the microphone?",
@@ -321,7 +321,7 @@ export const WORKSHOPS: readonly Workshop[] = [
           },
           {
             "id": "mic-after-settings",
-            "title": "Open the mic stream after `SettingsApplied`",
+            "title": "Open the mic stream after <code>SettingsApplied</code>",
             "bodyHtml": "<p>The microphone uses a callback that fires on every captured chunk:</p>\n<pre><code class=\"hljs language-python\"><span class=\"hljs-keyword\">def</span> <span class=\"hljs-title function_\">microphone_callback</span>(<span class=\"hljs-params\">indata, _frames, _time_info, _status</span>):\n    agent.send_media(<span class=\"hljs-built_in\">bytes</span>(indata))\n\nmicrophone = sd.RawInputStream(\n    samplerate=SAMPLE_RATE,\n    channels=CHANNELS,\n    dtype=DTYPE,\n    callback=microphone_callback,\n)\nmicrophone.start()\n</code></pre><p>Each chunk gets shipped to Deepgram via <code>agent.send_media(bytes(indata))</code>. The Voice Agent handles all the buffering and word-boundary detection on its side — you don&#39;t need to chunk to phrase boundaries or do any pre-processing.</p>\n<p>We deliberately start the mic <em>after</em> <code>SettingsApplied</code> so that we&#39;re not sending audio while the agent is still configuring itself.</p>\n"
           },
           {
@@ -344,7 +344,7 @@ export const WORKSHOPS: readonly Workshop[] = [
         "steps": [
           {
             "id": "prompt-is-personality",
-            "title": "The prompt *is* the agent",
+            "title": "The prompt <em>is</em> the agent",
             "bodyHtml": "<p>The system prompt is the only piece of context the LLM has about who it is and what it&#39;s doing. It&#39;s sent on every turn, ahead of the conversation transcript.</p>\n<p>A useful prompt usually covers four things:</p>\n<ol>\n<li><strong>Who the agent is</strong> — a name, a role, a brief identity.</li>\n<li><strong>What it&#39;s there to do</strong> — its goal in this session.</li>\n<li><strong>How it should behave</strong> — tone, length, when to ask clarifying questions.</li>\n<li><strong>What it should <em>not</em> do</strong> — out-of-scope topics, things to defer to a human, anything you don&#39;t want it inventing.</li>\n</ol>\n",
             "quiz": {
               "question": "Where does your agent's personality live?",
@@ -474,7 +474,7 @@ export const WORKSHOPS: readonly Workshop[] = [
       },
       {
         "slug": "tools",
-        "title": "Tools & Function Calls",
+        "title": "Tools &amp; Function Calls",
         "order": 7,
         "intro": "<p>A voice agent that can only talk is a chatbot with a mic and speakers. A voice agent that can call tools is an assistant. This is the single biggest jump you can make in capability.</p>\n",
         "steps": [

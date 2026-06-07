@@ -1,6 +1,6 @@
 @if (section(); as sec) {
   <section>
-    <h1>{{ sec.title }}</h1>
+    <h1 [innerHTML]="sec.title"></h1>
     @if (sec.intro) {
       <div [innerHTML]="sec.intro"></div>
     }
@@ -18,7 +18,7 @@
         >
           <button type="button">
             <i class="fas fa-arrow-left fa-fw" aria-hidden="true"></i>
-            Previous: {{ previousSection()?.title }}
+            <span>Previous: </span><span [innerHTML]="previousSection()?.title"></span>
           </button>
         </a>
       </div>
@@ -33,7 +33,7 @@
             class="fas fa-check fa-fw workshop-continue__check"
             aria-hidden="true"
           ></i>
-          {{ continueLabel() }}
+          <span [innerHTML]="continueLabel()"></span>
           <i
             class="fas fa-arrow-right fa-fw workshop-continue__arrow"
             aria-hidden="true"

@@ -36,6 +36,13 @@ const renderMarkdown = async (source) => {
   return await marked.parse(source.trim());
 };
 
+const renderInline = async (source) => {
+  if (!source || source.trim() === '') {
+    return '';
+  }
+  return await marked.parseInline(source.trim());
+};
+
 const parseStandaloneYaml = (yamlString) => {
   const fenced = `---\n${yamlString}\n---\n`;
   return matter(fenced).data ?? {};
@@ -86,7 +93,11 @@ const buildSection = async (filePath) => {
   const renderedSteps = await Promise.all(
     steps.map(async (step) => {
       const bodyHtml = await renderMarkdown(step.bodyLines.join('\n'));
-      const result = { id: step.id, title: step.title, bodyHtml };
+      const result = {
+        id: step.id,
+        title: await renderInline(step.title),
+        bodyHtml,
+      };
       if (checks[step.id]) {
         result.quiz = checks[step.id];
       }
@@ -99,7 +110,7 @@ const buildSection = async (filePath) => {
 
   return {
     slug,
-    title: data.title ?? slug,
+    title: await renderInline(data.title ?? slug),
     order,
     intro: introHtml,
     steps: renderedSteps,
@@ -133,9 +144,9 @@ const buildWorkshop = async (slug) => {
 
   return {
     slug,
-    title: meta.title,
-    tagline: meta.tagline,
-    description: meta.description,
+    title: await renderInline(meta.title),
+    tagline: meta.tagline ? await renderInline(meta.tagline) : undefined,
+    description: meta.description ? await renderInline(meta.description) : undefined,
     sections,
   };
 };
