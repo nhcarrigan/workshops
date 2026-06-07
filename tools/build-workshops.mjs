@@ -99,10 +99,20 @@ const buildSection = async (filePath) => {
         bodyHtml,
       };
       if (checks[step.id]) {
-        result.quiz = checks[step.id];
+        const rawQuiz = checks[step.id];
+        result.quiz = {
+          question: await renderInline(rawQuiz.question),
+          options: await Promise.all(
+            (rawQuiz.options ?? []).map(async (option) => ({
+              text: await renderInline(option.text),
+              correct: Boolean(option.correct),
+              feedback: option.feedback ? await renderInline(option.feedback) : undefined,
+            })),
+          ),
+        };
       }
       if (pauses[step.id]) {
-        result.pausePoint = pauses[step.id];
+        result.pausePoint = await renderInline(pauses[step.id]);
       }
       return result;
     }),

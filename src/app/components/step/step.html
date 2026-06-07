@@ -6,7 +6,7 @@
     <div class="workshop-quiz">
       <p class="workshop-quiz__question">
         <i class="fas fa-question-circle"></i>
-        Check yourself: {{ quiz.question }}
+        <span>Check yourself: </span><span [innerHTML]="quiz.question"></span>
       </p>
       <div class="workshop-quiz__options">
         @for (option of shuffledOptions(); track option.text) {
@@ -14,9 +14,8 @@
             type="button"
             class="workshop-quiz__option"
             (click)="pick($index)"
-          >
-            {{ option.text }}
-          </button>
+            [innerHTML]="option.text"
+          ></button>
         }
       </div>
       @if (selectedOption(); as picked) {
@@ -31,7 +30,7 @@
             <strong><i class="fas fa-times"></i> Not quite.</strong>
           }
           @if (picked.feedback) {
-            <span> {{ picked.feedback }}</span>
+            <span> </span><span [innerHTML]="picked.feedback"></span>
           }
         </div>
       }
@@ -43,7 +42,7 @@
       <span class="workshop-pause__label">
         <i class="fas fa-hand-paper"></i> Pause &mdash; check in with the instructor
       </span>
-      <span>{{ pause }}</span>
+      <span [innerHTML]="pause"></span>
     </div>
   }
 </article>
