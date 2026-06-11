@@ -2,7 +2,7 @@
 title: "Handling Events"
 checks:
   bytes-path:
-    question: "What do you do when `on_message` receives `bytes`?"
+    question: "What do you do when the message handler receives raw audio bytes?"
     options:
       - text: "Write them straight to the speaker output stream."
         correct: true
@@ -33,6 +33,8 @@ Every message the Voice Agent sends you flows through one callback. Some are aud
 
 The first check is the most important: if the message is raw bytes, write it to your speaker output. That's how the agent talks.
 
+:::tabs
+@tab python Python
 ```python
 def on_message(message: AgentMessage) -> None:
     if isinstance(message, bytes):
@@ -40,12 +42,26 @@ def on_message(message: AgentMessage) -> None:
         return
 ```
 
-The bytes are already in the encoding you declared in `audio.output`, so you can feed them straight to a `RawOutputStream` without any decoding step.
+@tab javascript JavaScript
+```javascript
+agent.on("message", (message) => {
+  if (Buffer.isBuffer(message)) {
+    speaker.write(message);
+    return;
+  }
+  // ...JSON event handling below
+});
+```
+:::
 
-## Dispatch on `message_type` {#dispatch}
+The bytes are already in the encoding you declared in `audio.output`, so you can feed them straight to the speaker output stream without any decoding step.
 
-For non-byte messages, the `type` field tells you which event you're looking at. The handler in `main.py` covers all the common ones:
+## Dispatch on `type` {#dispatch}
 
+For non-byte messages, the `type` field tells you which event you're looking at. The handler covers all the common ones:
+
+:::tabs
+@tab python Python
 ```python
 message_type = getattr(message, "type", "Unknown")
 
@@ -72,10 +88,43 @@ else:
     print(f">> {message_type}")
 ```
 
+@tab javascript JavaScript
+```javascript
+switch (message.type) {
+  case "SettingsApplied":
+    console.log(">> Settings applied");
+    resolveSettingsApplied();
+    break;
+  case "ConversationText":
+    console.log(`[${message.role ?? "unknown"}] ${message.content ?? ""}`);
+    break;
+  case "UserStartedSpeaking":
+    console.log(">> User started speaking");
+    break;
+  case "AgentThinking":
+    console.log(">> Agent thinking...");
+    break;
+  case "AgentStartedSpeaking":
+    console.log(">> Agent started speaking");
+    break;
+  case "AgentAudioDone":
+    console.log(">> Agent finished speaking");
+    break;
+  case "Error":
+    console.log(`>> Agent error: ${message.code ?? "unknown"} - ${message.description ?? "unknown error"}`);
+    break;
+  default:
+    console.log(`>> ${message.type}`);
+}
+```
+:::
+
 ## Synchronise on `SettingsApplied` {#settings-applied}
 
 The `SettingsApplied` event is the handshake that tells you the agent has acknowledged your config and is ready to accept media. Before that, sending mic audio is a no-op at best and an error at worst.
 
+:::tabs
+@tab python Python
 We use a `threading.Event` so the main thread can wait for the handshake before opening the microphone:
 
 ```python
@@ -89,6 +138,28 @@ if message_type == "SettingsApplied":
 if not settings_applied.wait(10):
     raise TimeoutError("Timed out waiting for agent settings to apply.")
 ```
+
+@tab javascript JavaScript
+We use a manually-resolved `Promise` so the main flow can `await` the handshake before opening the microphone:
+
+```javascript
+let resolveSettingsApplied;
+const settingsApplied = new Promise((resolve) => {
+  resolveSettingsApplied = resolve;
+});
+
+// Inside the message handler:
+if (message.type === "SettingsApplied") {
+  resolveSettingsApplied();
+}
+
+// Later, after sending settings:
+const settingsTimeout = new Promise((_, reject) => {
+  setTimeout(() => reject(new Error("Timed out waiting for agent settings to apply.")), 10000);
+});
+await Promise.race([settingsApplied, settingsTimeout]);
+```
+:::
 
 ## Useful events for UI and observability {#other-events}
 

@@ -41,6 +41,8 @@ Tools let the model decide *"to answer this, I need to run a function and use th
 
 Functions live in your `think` settings under `functions`. Each function gets a name, a description (this is what the LLM reads to decide when to call it), a parameter schema in JSON Schema format, and a `client_side` flag.
 
+:::tabs
+@tab python Python
 ```python
 think = ThinkSettingsV1(
     provider=ThinkSettingsV1Provider_OpenAi(
@@ -67,16 +69,45 @@ think = ThinkSettingsV1(
 )
 ```
 
+@tab javascript JavaScript
+```javascript
+const think = {
+  provider: {
+    type:        "open_ai",
+    model:       "gpt-4o-mini",
+    temperature: 0.7,
+  },
+  prompt:
+    "You are a helpful AI assistant. Keep your responses brief. " +
+    "When the user asks for the current time, call the " +
+    "get_current_time function and read the result back to them.",
+  functions: [
+    {
+      name:        "get_current_time",
+      description: "Returns the current local time as an ISO-8601 string.",
+      parameters:  {
+        type:       "object",
+        properties: {},
+      },
+      client_side: true,
+    },
+  ],
+};
+```
+:::
+
 A couple of details worth noting:
 
 - The `description` matters. The LLM uses it to decide when to call the function — vague descriptions lead to either over-calling or under-calling.
 - The `parameters` schema follows JSON Schema. For a no-argument function, an empty `properties` object is fine.
-- `client_side=True` means *you* run the function. Deepgram will send you a `FunctionCallRequest` and wait for your response.
+- `client_side: true` means *you* run the function. Deepgram will send you a `FunctionCallRequest` and wait for your response.
 
 ## Handle the call request {#handle-the-call}
 
-Watch for `FunctionCallRequest` messages in your `on_message` handler. For each requested call, run the function and send back a `FunctionCallResponse`:
+Watch for `FunctionCallRequest` messages in your message handler. For each requested call, run the function and send back a `FunctionCallResponse`:
 
+:::tabs
+@tab python Python
 ```python
 from datetime import datetime
 from deepgram.agent.v1.types import AgentV1SendFunctionCallResponse
@@ -96,6 +127,25 @@ elif message_type == "FunctionCallRequest":
             )
 ```
 
+@tab javascript JavaScript
+```javascript
+// Inside the message handler:
+case "FunctionCallRequest":
+  for (const call of message.functions ?? []) {
+    if (call.name === "get_current_time") {
+      const result = new Date().toISOString();
+      console.log(`>> Tool call: ${call.name}() -> ${result}`);
+      agent.sendFunctionCallResponse({
+        id:      call.id,
+        name:    call.name,
+        content: result,
+      });
+    }
+  }
+  break;
+```
+:::
+
 The model receives your `content` string as the function's return value and uses it to generate the spoken reply.
 
 ## Test it {#test-it}
@@ -112,4 +162,4 @@ Once one function works, more is easy. A few directions to try:
 - **Take an action:** send a Slack message, create a calendar event, file a ticket.
 - **Compose multiple tools:** a single conversation can call several functions in sequence.
 
-You can also use `client_side=False` for built-in helpers if Deepgram exposes them for your use case, but the vast majority of real agents use client-side functions calling your own code.
+You can also use `client_side: false` for built-in helpers if Deepgram exposes them for your use case, but the vast majority of real agents use client-side functions calling your own code.

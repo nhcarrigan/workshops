@@ -44,6 +44,8 @@ A useful prompt usually covers four things:
 
 Replace the `prompt` value in your settings with something that has more shape. Here's an example that turns your agent into a Socratic developer mentor:
 
+:::tabs
+@tab python Python
 ```python
 prompt = (
     "Your name is Rose, and you are here to help the developer "
@@ -54,11 +56,30 @@ prompt = (
 )
 ```
 
+@tab javascript JavaScript
+```javascript
+const prompt =
+  "Your name is Rose, and you are here to help the developer " +
+  "begin building with Deepgram's products. You should be " +
+  "helpful and encouraging, but do not simply give the answers. " +
+  "Leverage the Socratic method to guide them through their own " +
+  "cognitive reasoning.";
+```
+:::
+
 Update the `greeting` to match the new identity:
 
+:::tabs
+@tab python Python
 ```python
 greeting = "Hello! I'm Rose, your mentor for all things Deepgram. What can I help you build today?"
 ```
+
+@tab javascript JavaScript
+```javascript
+const greeting = "Hello! I'm Rose, your mentor for all things Deepgram. What can I help you build today?";
+```
+:::
 
 Restart the agent and have a conversation with it. Notice that even though the underlying LLM hasn't changed, the *agent* feels completely different.
 

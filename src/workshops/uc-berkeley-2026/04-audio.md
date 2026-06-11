@@ -1,18 +1,6 @@
 ---
 title: "Audio Plumbing"
 checks:
-  sounddevice-portable:
-    question: "Why does `sounddevice` work cross-platform without extra installs in most cases?"
-    options:
-      - text: "It ships PortAudio binaries inside its Python wheels for Linux, macOS, and Windows."
-        correct: true
-        feedback: "Right — the wheel bundles PortAudio, so attendees don't need apt/brew/choco gymnastics."
-      - text: "It uses the OS's WebRTC stack."
-        correct: false
-        feedback: "sounddevice talks to PortAudio, not WebRTC."
-      - text: "It falls back to a file-based audio simulator if no device is found."
-        correct: false
-        feedback: "There's no simulator fallback — if PortAudio can't see an audio device, you get an error."
   speaker-first:
     question: "Why do we open the speaker stream *before* sending settings?"
     options:
@@ -22,19 +10,24 @@ checks:
       - text: "Speaker streams take longer to open than mic streams."
         correct: false
         feedback: "Both open at roughly the same speed — the ordering is about being ready for the greeting."
-      - text: "It's a `sounddevice` API requirement."
+      - text: "It's an audio-library API requirement."
         correct: false
-        feedback: "sounddevice doesn't require this order — it's about the agent lifecycle."
+        feedback: "Neither audio library requires this order — it's about the agent lifecycle."
 ---
 
 Audio bytes flow in both directions. The agent's speech comes in over the WebSocket and needs somewhere to play; your microphone audio comes in from the OS and needs to be shipped out to Deepgram.
 
-We use the [`sounddevice`](https://python-sounddevice.readthedocs.io/) package because it ships PortAudio binaries in its Python wheels, which means most attendees won't need to install anything system-level on macOS, Windows, or desktop Linux.
+The libraries we use to talk to the operating system differ by language:
+
+- **Python** uses [`sounddevice`](https://python-sounddevice.readthedocs.io/), which ships PortAudio binaries inside its Python wheels — most attendees won't need to install anything system-level on macOS, Windows, or desktop Linux.
+- **JavaScript** uses [`mic`](https://www.npmjs.com/package/mic) for input and [`speaker`](https://www.npmjs.com/package/speaker) for output. `mic` shells out to `sox` (macOS, Windows) or `arecord` (Linux), so those need to be installed — see the [Setup](/uc-berkeley-2026/setup#install) section.
 
 ## Open the speaker stream first {#speaker-first}
 
-Before we even send our agent settings, we open a `RawOutputStream` so the speaker is ready for the agent's greeting:
+Before we even send our agent settings, we open the speaker so it's ready for the agent's greeting:
 
+:::tabs
+@tab python Python
 ```python
 import sounddevice as sd
 
@@ -50,20 +43,50 @@ speaker = sd.RawOutputStream(
 speaker.start()
 ```
 
-Inside `on_message`, agent audio bytes go straight to it:
+@tab javascript JavaScript
+```javascript
+import Speaker from "speaker";
 
+const SAMPLE_RATE = 24000;
+const CHANNELS = 1;
+const BIT_DEPTH = 16;
+
+const speaker = new Speaker({
+  channels:   CHANNELS,
+  bitDepth:   BIT_DEPTH,
+  sampleRate: SAMPLE_RATE,
+  signed:     true,
+});
+```
+:::
+
+Inside the message handler, agent audio bytes go straight to it:
+
+:::tabs
+@tab python Python
 ```python
 if isinstance(message, bytes):
     speaker.write(message)
     return
 ```
 
+@tab javascript JavaScript
+```javascript
+if (Buffer.isBuffer(message)) {
+  speaker.write(message);
+  return;
+}
+```
+:::
+
 No decoding, no buffering of your own — the agent gives you bytes in your declared output format, and the speaker plays them.
 
 ## Open the mic stream after `SettingsApplied` {#mic-after-settings}
 
-The microphone uses a callback that fires on every captured chunk:
+The microphone emits chunks of audio that we forward to Deepgram on every event:
 
+:::tabs
+@tab python Python
 ```python
 def microphone_callback(indata, _frames, _time_info, _status):
     agent.send_media(bytes(indata))
@@ -77,14 +100,36 @@ microphone = sd.RawInputStream(
 microphone.start()
 ```
 
-Each chunk gets shipped to Deepgram via `agent.send_media(bytes(indata))`. The Voice Agent handles all the buffering and word-boundary detection on its side — you don't need to chunk to phrase boundaries or do any pre-processing.
+@tab javascript JavaScript
+```javascript
+import micFactory from "mic";
+
+const microphone = micFactory({
+  rate:     String(SAMPLE_RATE),
+  channels: String(CHANNELS),
+  bitwidth: String(BIT_DEPTH),
+  encoding: "signed-integer",
+  endian:   "little",
+  device:   "default",
+});
+
+const micStream = microphone.getAudioStream();
+micStream.on("data", (chunk) => agent.sendMedia(chunk));
+
+microphone.start();
+```
+:::
+
+Each chunk gets shipped to Deepgram via the agent's `send_media` (Python) or `sendMedia` (JavaScript) call. The Voice Agent handles all the buffering and word-boundary detection on its side — you don't need to chunk to phrase boundaries or do any pre-processing.
 
 We deliberately start the mic *after* `SettingsApplied` so that we're not sending audio while the agent is still configuring itself.
 
 ## Clean shutdown on Ctrl+C {#cleanup}
 
-The whole thing runs until you press Ctrl+C. Wrap the main loop in a `try/finally` so both streams stop cleanly:
+The whole thing runs until you press Ctrl+C. Stop both streams cleanly on shutdown:
 
+:::tabs
+@tab python Python
 ```python
 try:
     while True:
@@ -96,12 +141,27 @@ finally:
     speaker.stop()
 ```
 
-Stopping the streams releases the underlying PortAudio handles. Not strictly necessary on process exit, but it's a habit worth keeping — the same pattern matters a lot more when the voice agent is embedded in a longer-running application.
+@tab javascript JavaScript
+```javascript
+const shutdown = () => {
+  console.log("\nShutting down...");
+  microphone.stop();
+  speaker.end();
+  process.exit(0);
+};
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
+```
+:::
+
+Stopping the streams releases the underlying audio handles. Not strictly necessary on process exit, but it's a habit worth keeping — the same pattern matters a lot more when the voice agent is embedded in a longer-running application.
 
 ## Troubleshooting audio devices {#troubleshooting}
 
-If `sounddevice` can't find an input or output device, you'll see a `PortAudioError: Error querying device -1` on startup. The most common causes:
+If the audio library can't find an input or output device, you'll see an error on startup. The most common causes:
 
 - **macOS:** the terminal doesn't have microphone permission yet. Run the script once, accept the system prompt, and try again.
 - **WSL:** no native audio routing. See the [WSL bridge step in Setup](/uc-berkeley-2026/setup#wsl).
-- **Headless Linux server:** there genuinely is no audio device. You'd need to pipe audio from a file or another source instead of using `sounddevice`.
+- **Linux (JavaScript flow):** `sox` or `arecord` isn't installed. Run `sudo apt install -y sox alsa-utils`.
+- **Headless Linux server:** there genuinely is no audio device. You'd need to pipe audio from a file or another source instead.

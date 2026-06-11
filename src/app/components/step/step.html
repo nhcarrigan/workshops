@@ -1,6 +1,17 @@
 <article class="workshop-step" [id]="step().id">
   <h2 class="workshop-step__heading" [innerHTML]="step().title"></h2>
-  <div class="workshop-step__body" [innerHTML]="step().bodyHtml"></div>
+  <div class="workshop-step__body">
+    @for (part of step().bodyParts; track $index) {
+      @switch (part.type) {
+        @case ('html') {
+          <div [innerHTML]="part.html"></div>
+        }
+        @case ('tabs') {
+          <app-tabs [tabs]="part.tabs" [workshopSlug]="workshopSlug()"></app-tabs>
+        }
+      }
+    }
+  </div>
 
   @if (step().quiz; as quiz) {
     <div class="workshop-quiz">

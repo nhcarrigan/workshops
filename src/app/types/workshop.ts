@@ -9,10 +9,20 @@ export interface Quiz {
   options:  Array<QuizOption>;
 }
 
+export interface Tab {
+  key:   string;
+  label: string;
+  html:  string;
+}
+
+export type BodyPart =
+  | { type: "html"; html: string }
+  | { type: "tabs"; tabs: Array<Tab> };
+
 export interface Step {
   id:          string;
   title:       string;
-  bodyHtml:    string;
+  bodyParts:   Array<BodyPart>;
   quiz?:       Quiz;
   pausePoint?: string;
 }

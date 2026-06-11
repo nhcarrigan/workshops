@@ -1,0 +1,15 @@
+<div class="workshop-tabs">
+  <div class="workshop-tabs__triggers" role="tablist">
+    @for (tab of tabs(); track tab.key) {
+      <button
+        type="button"
+        role="tab"
+        class="workshop-tabs__trigger"
+        [class.is-active]="tab.key === activeTab().key"
+        [attr.aria-selected]="tab.key === activeTab().key"
+        (click)="pick(tab.key)"
+      >{{ tab.label }}</button>
+    }
+  </div>
+  <div class="workshop-tabs__panel" role="tabpanel" [innerHTML]="activeTab().html"></div>
+</div>

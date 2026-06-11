@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import type { QuizOption, Step as StepData } from '../../types/workshop';
+import { Tabs } from '../tabs/tabs';
 
 const shuffleOptions = (options: readonly QuizOption[]): QuizOption[] => {
   const shuffled = [...options];
@@ -12,13 +13,14 @@ const shuffleOptions = (options: readonly QuizOption[]): QuizOption[] => {
 
 @Component({
   selector: 'app-step',
-  imports: [],
+  imports: [Tabs],
   templateUrl: './step.html',
   styleUrl: './step.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Step {
   public readonly step = input.required<StepData>();
+  public readonly workshopSlug = input.required<string>();
 
   protected readonly selectedOptionIndex = signal<number | undefined>(undefined);
 

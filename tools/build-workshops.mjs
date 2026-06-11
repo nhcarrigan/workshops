@@ -48,6 +48,91 @@ const parseStandaloneYaml = (yamlString) => {
   return matter(fenced).data ?? {};
 };
 
+const splitBodyParts = (body) => {
+  const lines = body.split('\n');
+  const parts = [];
+  let buffer = [];
+  let i = 0;
+
+  const flushHtml = () => {
+    if (buffer.length === 0) {
+      return;
+    }
+    const text = buffer.join('\n').trim();
+    if (text) {
+      parts.push({ type: 'html', source: text });
+    }
+    buffer = [];
+  };
+
+  while (i < lines.length) {
+    const line = lines[i];
+    if (/^:::tabs\s*$/.test(line)) {
+      flushHtml();
+      const tabBlock = [];
+      i++;
+      while (i < lines.length && !/^:::\s*$/.test(lines[i])) {
+        tabBlock.push(lines[i]);
+        i++;
+      }
+      i++;
+      parts.push({ type: 'tabs', source: tabBlock.join('\n') });
+      continue;
+    }
+    buffer.push(line);
+    i++;
+  }
+  flushHtml();
+  return parts;
+};
+
+const parseTabBlock = (source) => {
+  const lines = source.split('\n');
+  const tabs = [];
+  let current = null;
+  for (const line of lines) {
+    const tabMatch = line.match(/^@tab\s+([\w-]+)(?:\s+(.+))?$/);
+    if (tabMatch) {
+      if (current) {
+        tabs.push(current);
+      }
+      const key = tabMatch[1];
+      const label = (tabMatch[2] ?? key).trim();
+      current = { key, label, bodyLines: [] };
+      continue;
+    }
+    if (current) {
+      current.bodyLines.push(line);
+    }
+  }
+  if (current) {
+    tabs.push(current);
+  }
+  return tabs;
+};
+
+const renderBodyParts = async (body) => {
+  const parts = splitBodyParts(body);
+  return Promise.all(
+    parts.map(async (part) => {
+      if (part.type === 'html') {
+        return { type: 'html', html: await renderMarkdown(part.source) };
+      }
+      const tabs = parseTabBlock(part.source);
+      return {
+        type: 'tabs',
+        tabs: await Promise.all(
+          tabs.map(async (tab) => ({
+            key:   tab.key,
+            label: tab.label,
+            html:  await renderMarkdown(tab.bodyLines.join('\n')),
+          })),
+        ),
+      };
+    }),
+  );
+};
+
 const splitSectionBody = (content) => {
   const lines = content.split('\n');
   const intro = [];
@@ -92,11 +177,11 @@ const buildSection = async (filePath) => {
 
   const renderedSteps = await Promise.all(
     steps.map(async (step) => {
-      const bodyHtml = await renderMarkdown(step.bodyLines.join('\n'));
+      const bodyParts = await renderBodyParts(step.bodyLines.join('\n'));
       const result = {
         id: step.id,
         title: await renderInline(step.title),
-        bodyHtml,
+        bodyParts,
       };
       if (checks[step.id]) {
         const rawQuiz = checks[step.id];

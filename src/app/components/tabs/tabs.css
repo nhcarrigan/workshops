@@ -1,0 +1,67 @@
+:host {
+  display: block;
+  margin: 1rem 0;
+}
+
+.workshop-tabs {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(212, 165, 199, 0.06);
+}
+
+.workshop-tabs__triggers {
+  display: flex;
+  gap: 4px;
+  padding: 6px 6px 0 6px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(168, 87, 126, 0.08);
+}
+
+.workshop-tabs__trigger {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 8px 18px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--foreground);
+  opacity: 0.65;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom: 3px solid transparent;
+  transition: opacity 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.workshop-tabs__trigger:hover {
+  opacity: 1;
+  background: rgba(168, 87, 126, 0.12);
+}
+
+.workshop-tabs__trigger.is-active {
+  opacity: 1;
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: rgba(212, 165, 199, 0.18);
+}
+
+.workshop-tabs__panel {
+  padding: 16px 20px;
+}
+
+.workshop-tabs__panel > :first-child {
+  margin-top: 0;
+}
+
+.workshop-tabs__panel > :last-child {
+  margin-bottom: 0;
+}
+
+.is-dark .workshop-tabs {
+  background: rgba(43, 27, 61, 0.35);
+}
+
+.is-dark .workshop-tabs__triggers {
+  background: rgba(43, 27, 61, 0.55);
+}

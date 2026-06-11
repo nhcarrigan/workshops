@@ -4,7 +4,7 @@ checks:
   where-to-help:
     question: "If you get stuck after the workshop, where should you go first?"
     options:
-      - text: "The Deepgram docs and the Discord at discord.gg/deepgram."
+      - text: "The Deepgram docs and the Discord at dpgr.am/ucb-ai-discord."
         correct: true
         feedback: "Both have active communities and quick response times. The docs cover the API, the Discord covers the messy real-world questions."
       - text: "Open a support ticket on the console."
@@ -43,10 +43,25 @@ For agents that need to route between languages mid-conversation, you can update
 
 Workshop ended, code working, big ideas in the back of your head — what next?
 
-- **Docs:** [docs.deepgram.com](https://docs.deepgram.com) is the canonical reference. Voice Agent has its own section with deeper dives on the WebSocket protocol, all the settings options, and integration patterns.
-- **Discord:** [discord.gg/deepgram](https://discord.gg/deepgram) — active community, Deepgram engineers hang out there, fastest place to unblock.
-- **GitHub:** [github.com/orgs/deepgram/discussions](https://github.com/orgs/deepgram/discussions) for longer-form questions and feature suggestions.
-- **Find us at the booth** today on the conference floor — we'd love to hear what you're building.
+**Docs** — the canonical reference for every endpoint, parameter, and integration pattern.
+
+| Docs |
+| --- |
+| [![Deepgram docs QR code](/qrs/ucb-ai-docs.png)](https://dpgr.am/ucb-ai-docs) |
+
+**Discord** — active community, Deepgram engineers hang out there, fastest place to unblock.
+
+| Discord |
+| --- |
+| [![Deepgram Discord QR code](/qrs/ucb-ai-discord.png)](https://dpgr.am/ucb-ai-discord) |
+
+**GitHub** — longer-form questions and feature suggestions live on the discussions board.
+
+| GitHub |
+| --- |
+| [![Deepgram GitHub QR code](/qrs/ucb-ai-github.png)](https://dpgr.am/ucb-ai-github) |
+
+**Find us at the booth** today on the conference floor — we'd love to hear what you're building.
 
 ## And have fun {#have-fun}
 

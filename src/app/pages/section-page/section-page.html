@@ -6,7 +6,7 @@
     }
 
     @for (step of sec.steps; track step.id) {
-      <app-step [step]="step"></app-step>
+      <app-step [step]="step" [workshopSlug]="workshopSlug()"></app-step>
     }
 
     <div class="workshop-continue">

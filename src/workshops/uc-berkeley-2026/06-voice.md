@@ -33,6 +33,8 @@ The TTS voice is the second-biggest lever you have over how your agent feels. As
 
 The voice is just a model id in the `speak` provider:
 
+:::tabs
+@tab python Python
 ```python
 speak=SpeakSettingsV1(
     provider=SpeakSettingsV1Provider_Deepgram(
@@ -41,6 +43,17 @@ speak=SpeakSettingsV1(
     ),
 ),
 ```
+
+@tab javascript JavaScript
+```javascript
+speak: {
+  provider: {
+    type:  "deepgram",
+    model: "aura-2-pandora-en",  // was: aura-2-asteria-en
+  },
+},
+```
+:::
 
 Restart the agent and you'll hear the new voice on the next greeting. No other code changes required.
 
